@@ -1,5 +1,4 @@
 
-from imblearn.over_sampling import SMOTE
 from sklearn.naive_bayes import MultinomialNB
 import pandas as pd
 import numpy as np
@@ -66,26 +65,25 @@ Test_X_Tfidf = Tfidf_vect.transform(Test_X)
 
 print(Train_X_Tfidf)
 
-
+'''
 class_weights = class_weight.compute_class_weight('balanced',
                                                  np.unique(Train_Y),
                                                  Train_Y)
 
-print(class_weight)
+print(class_weights)'''
 
-'''
-class_weight = {0: 1,
-                1: 2,
-                2: 3,
-                3: 11}
-'''
+
+class_weights = {0: 1,
+                 1: 2,
+                 2: 4,
+                 3: 6}
+
 
 # fit the training dataset on the NB classifier
 ctf = MultinomialNB()
 
 
-
-ctf.fit(Train_X_Tfidf,Train_Y, class_weight = class_weights)
+ctf.fit(Train_X_Tfidf,Train_Y)
 # predict the labels on validation dataset
 predictions_NB = ctf.predict(Test_X_Tfidf)
 
@@ -94,12 +92,7 @@ predictions_NB = ctf.predict(Test_X_Tfidf)
 print("Naive Bayes Accuracy Score -> ",accuracy_score(predictions_NB, Test_Y)*100)
 
 
-print(
-pd.crosstab(
-    pd.Series(Test_Y, name='Actual'),
-    pd.Series(predictions_NB, name='Predicated'),
-    margins=True
-))
+
 
 
 print(f1_score(Test_Y, predictions_NB, average='weighted'))
@@ -107,9 +100,20 @@ print(f1_score(Test_Y, predictions_NB, average='weighted'))
 
 # Classifier - Algorithm - SVM
 # fit the training dataset on the classifier
-SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight = 'balanced')
 SVM.fit(Train_X_Tfidf,Train_Y)
 # predict the labels on validation dataset
 predictions_SVM = SVM.predict(Test_X_Tfidf)
 # Use accuracy_score function to get the accuracy
 print("SVM Accuracy Score -> ",accuracy_score(predictions_SVM, Test_Y)*100)
+
+print(
+pd.crosstab(
+    pd.Series(Test_Y, name='Actual'),
+    pd.Series(predictions_SVM, name='Predicated'),
+    margins=True
+)
+)
+
+print(f1_score(Test_Y, predictions_SVM, average=None))
+

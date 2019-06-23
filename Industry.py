@@ -4,7 +4,6 @@
 # In[2]:
 
 
-from imblearn.over_sampling import SMOTE
 from sklearn.naive_bayes import MultinomialNB
 import pandas as pd
 import numpy as np
@@ -13,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.utils import class_weight
+import pickle
 
 
 # ### 1.0 Loading our dataset
@@ -64,6 +64,9 @@ Tfidf_vect = TfidfVectorizer(max_features=5000)
 Tfidf_vect.fit(X)
 Train_X_Tfidf = Tfidf_vect.transform(Train_X)
 Test_X_Tfidf = Tfidf_vect.transform(Test_X)
+
+
+#pickle.dump(Tfidf_vect,open("feature.pkl","wb"))
 
 
 # ### 2.0 classifiers
@@ -159,6 +162,10 @@ class_weights = {0: 4,
 
 SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight = class_weights)
 SVM.fit(Train_X_Tfidf,Train_Y)
+# save the model to disk
+#filename = 'finalized_model.sav'
+#pickle.dump(SVM, open(filename, 'wb'))
+
 predictions_SVM = SVM.predict(Test_X_Tfidf)
 
 
